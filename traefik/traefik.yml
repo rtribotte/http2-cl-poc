@@ -1,0 +1,32 @@
+entrypoints:
+  web:
+    address: ":8080"
+    http3: true
+
+log:
+  level: DEBUG
+
+providers:
+  file:
+    filename: "/Users/juliensalleyron/dev/cve/http3-invalidCL/http2client/traefik/traefik.yml"
+
+http:
+  routers:
+    my-router:
+      entryPoints:
+        - web
+      rule: "Host(`localhost`)"
+      service: my-service
+      tls: {}
+      middlewares: [ limit ]
+
+  services:
+    my-service:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8081"
+
+  middlewares:
+    limit:
+      buffering:
+        memRequestBodyBytes: 2000000
